@@ -45,19 +45,31 @@ public class SearchMove : MonoBehaviour {
 
     IEnumerator Rotate()
     {
-        float currentEulerAngle = transform.eulerAngles.z;
-        float angleRotated = 0;
-
-        while (angleRotated < 20)
+        if (transform.eulerAngles.z < 180)
         {
-            transform.Rotate(0, 0, rotateSpeed * rotationDirection * Time.deltaTime);
-            angleRotated += rotateSpeed * rotationDirection * Time.deltaTime;
-            if (angleRotated > 20)
+            while (transform.eulerAngles.z < 180)
             {
-                transform.eulerAngles = new Vector3(0, 0, currentEulerAngle + 180);
+                transform.Rotate(0, 0, rotateSpeed * rotationDirection * Time.deltaTime);
+                if (transform.eulerAngles.z > 180)
+                {
+                    transform.eulerAngles = new Vector3(0, 0, 180);
+                }
+                yield return null;
             }
-            yield return null;
+        }
+        else // transform is equal to 180
+        {
+            while (transform.eulerAngles.z >= 180)
+            {
+                transform.Rotate(0, 0, rotateSpeed * rotationDirection * Time.deltaTime);
+                if (transform.eulerAngles.z < 180)
+                {
+                    transform.eulerAngles = new Vector3(0, 0, 0);
+                }
+                yield return null;
+            }
         }
         distanceTraveled = 0;
+        
     }
 }
