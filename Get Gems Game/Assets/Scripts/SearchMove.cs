@@ -18,6 +18,7 @@ public class SearchMove : MonoBehaviour {
     private float rotationDirection;
     private float distanceTraveled = 0;
     private float currentAngle = 0;
+    private float startingAngle;
 
     // Use this for initialization
     void Start ()
@@ -26,6 +27,7 @@ public class SearchMove : MonoBehaviour {
             rotationDirection = 1;
         else
             rotationDirection = -1;
+        startingAngle = transform.eulerAngles.z;
     }
 	
 	// Update is called once per frame
@@ -45,26 +47,26 @@ public class SearchMove : MonoBehaviour {
 
     IEnumerator Rotate()
     {
-        if (transform.eulerAngles.z < 180)
+        if (transform.eulerAngles.z < 180 + startingAngle && startingAngle <= transform.eulerAngles.z)
         {
-            while (transform.eulerAngles.z < 180)
+            while (transform.eulerAngles.z < 180 + startingAngle )
             {
                 transform.Rotate(0, 0, rotateSpeed * rotationDirection * Time.deltaTime);
-                if (transform.eulerAngles.z > 180)
+                if (transform.eulerAngles.z > 180 + startingAngle)
                 {
-                    transform.eulerAngles = new Vector3(0, 0, 180);
+                    transform.eulerAngles = new Vector3(0, 0, 180 + startingAngle);
                 }
                 yield return null;
             }
         }
         else // transform is equal to 180
         {
-            while (transform.eulerAngles.z >= 180)
+            while (transform.eulerAngles.z >= 180 + startingAngle || startingAngle > transform.eulerAngles.z)
             {
                 transform.Rotate(0, 0, rotateSpeed * rotationDirection * Time.deltaTime);
-                if (transform.eulerAngles.z < 180)
+                if (transform.eulerAngles.z > startingAngle && transform.eulerAngles.z < 180 + startingAngle)
                 {
-                    transform.eulerAngles = new Vector3(0, 0, 0);
+                    transform.eulerAngles = new Vector3(0, 0, startingAngle);
                 }
                 yield return null;
             }
@@ -72,4 +74,5 @@ public class SearchMove : MonoBehaviour {
         distanceTraveled = 0;
         
     }
+
 }
