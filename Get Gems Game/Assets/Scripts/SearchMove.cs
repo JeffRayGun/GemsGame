@@ -8,8 +8,8 @@ using UnityEngine;
 // to its starting point, where it repeats the cycle.
 // ------------------------------------------------------------------
 
-public class SearchMove : MonoBehaviour {
-
+public class SearchMove : Searchlight
+{
     public float speed;
     public float rotateSpeed;
     public float distanceToWalk;
@@ -33,17 +33,20 @@ public class SearchMove : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate ()
     {
-		if (distanceTraveled > distanceToWalk)
-        {
-            // Rotate 180 degrees, then 
-            StartCoroutine("Rotate");
+        if (!catchingPlayer)
+        { 
+	        if (distanceTraveled > distanceToWalk)
+            {
+                // Rotate 180 degrees, then 
+                StartCoroutine("Rotate");
+            }
+            else
+            {
+                transform.Translate(new Vector3(0,-1 * speed * Time.deltaTime,0));
+                distanceTraveled += speed * Time.deltaTime;
+            }
         }
-        else
-        {
-            transform.Translate(new Vector3(0,-1 * speed * Time.deltaTime,0));
-            distanceTraveled += speed * Time.deltaTime;
-        }
-	}
+    }
 
     IEnumerator Rotate()
     {
@@ -51,6 +54,9 @@ public class SearchMove : MonoBehaviour {
         {
             while (transform.eulerAngles.z < 180 + startingAngle )
             {
+                // If player is caught, we want to stop this rotation routine:
+                if (catchingPlayer == true) break; 
+
                 transform.Rotate(0, 0, rotateSpeed * rotationDirection * Time.deltaTime);
                 if (transform.eulerAngles.z > 180 + startingAngle)
                 {
@@ -63,6 +69,9 @@ public class SearchMove : MonoBehaviour {
         {
             while (transform.eulerAngles.z >= 180 + startingAngle || startingAngle > transform.eulerAngles.z)
             {
+                // If player is caught, we want to stop this rotation routine:
+                if (catchingPlayer == true) break;
+
                 transform.Rotate(0, 0, rotateSpeed * rotationDirection * Time.deltaTime);
                 if (transform.eulerAngles.z > startingAngle && transform.eulerAngles.z < 180 + startingAngle)
                 {

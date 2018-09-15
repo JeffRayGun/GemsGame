@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LightRotate : MonoBehaviour {
+public class LightRotate : Searchlight {
 
     public float maxAngleOfRotation; // Set to 0 for continuous rotation
     public float speed;
@@ -31,28 +31,31 @@ public class LightRotate : MonoBehaviour {
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (maxAngleOfRotation != 0) // If angled rotation is enabled, we check to see if the rotation has exceeded the maximum
+        if (catchingPlayer != true)
         {
-            if (Mathf.Abs(currentAngle) > maxAngleOfRotation && isMoving)
+            if (maxAngleOfRotation != 0) // If angled rotation is enabled, we check to see if the rotation has exceeded the maximum
             {
-                Debug.Log("Over the angle");
-                rotationDirection *= -1;
-                
-                // If enabled, we wait a given amount of time after this completed rotation cycle.
-                if (waitTimeAfterRotation > 0)
-                    StartCoroutine("WaitAfterRotate");
-            }
+                if (Mathf.Abs(currentAngle) > maxAngleOfRotation && isMoving)
+                {
+                    Debug.Log("Over the angle");
+                    rotationDirection *= -1;
 
-            if (isMoving)
-            { 
+                    // If enabled, we wait a given amount of time after this completed rotation cycle.
+                    if (waitTimeAfterRotation > 0)
+                        StartCoroutine("WaitAfterRotate");
+                }
+
+                if (isMoving)
+                {
+                    transform.Rotate(0, 0, speed * rotationDirection);
+                    currentAngle += speed * rotationDirection;
+                }
+
+            }
+            else
+            {
                 transform.Rotate(0, 0, speed * rotationDirection);
-                currentAngle += speed * rotationDirection;
             }
-
-        }
-        else
-        {
-            transform.Rotate(0, 0, speed * rotationDirection);
         }
     }
 
@@ -60,8 +63,13 @@ public class LightRotate : MonoBehaviour {
     {
         isMoving = false;
         yield return new WaitForSeconds(waitTimeAfterRotation);
-        transform.Rotate(0, 0, speed * rotationDirection);
-        currentAngle += speed * rotationDirection;
+        // This code unstucks the rotate light from being stuck in the waiting angle;
+        // A better solution to this should be found.
+        if (!catchingPlayer)
+        { 
+            transform.Rotate(0, 0, speed * rotationDirection);
+            currentAngle += speed * rotationDirection;
+        }
         isMoving = true;
     }
 }

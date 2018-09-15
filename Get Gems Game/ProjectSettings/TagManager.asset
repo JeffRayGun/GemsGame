@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Collectible
   - Death
+  - Gem
+  - Key
+  - Door
   layers:
   - Default
   - TransparentFX
